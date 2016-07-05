@@ -1,8 +1,24 @@
 extend partials/layout
 
 block content
+	svg(xmlns='http://www.w3.org/2000/svg', height='0', width='0')
+		symbol#circ(viewBox="0 0 100 100")
+			circle(r='35', cy='50', cx='50', fill='none')
+		symbol#cross(viewBox="0 0 100 100")
+			defs
+				clippath#a
+					path(d='M23.908 76.467V23.783l59.105-.826-18.33 18.388-1.625 16.185 20.257 19.935z')
+			path(d='M25.314 25.314l49.498 49.498-.124-49.5-49.624 49.624', clip-path='url(#a)', fill='none', stroke-linecap='round', stroke-linejoin='round')
+
+
+
+
+
+
 	main
 		.board
 			- for (let i = 0; i< 9; ++i)
 				.cell
+					svg
+						use(xlink:href=(i%2 ? "#circ" : "#cross"))
 			

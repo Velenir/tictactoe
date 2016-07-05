@@ -64,6 +64,16 @@ div, span {
 	background-color: white;
 	transition: 1s transform;
 	position: relative;
+	transform-style: preserve-3d;
+
+	> svg {
+		stroke: black;
+		stroke-width: 7;
+		width: 100%;
+		height: 100%;
+		backface-visibility: hidden;
+		animation: 1.5s linear draw;
+	}
 
 	&:nth-child(3n + 4) {
 		clear: left;
@@ -156,5 +166,16 @@ div, span {
 		top: 300px;
 		transform: rotateY(400deg) rotateX(200deg) scale(0.7);
 		opacity: 0;
+	}
+}
+
+@keyframes draw {
+	from {
+		stroke-dasharray: 220;
+		stroke-dashoffset: 220;
+	}
+	to {
+		stroke-dasharray: 220;
+		stroke-dashoffset: 0;
 	}
 }
