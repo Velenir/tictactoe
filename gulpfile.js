@@ -26,7 +26,7 @@ const dist = {
 };
 
 // Static Server + watching scss/jade files
-gulp.task('serve', ['sass', 'jade', 'javascript', 'images'], function() {
+gulp.task('serve', ['sass', 'jade', 'javascript'], function() {
 	browserSync.init({
 		server: {
 			baseDir: dist.base
