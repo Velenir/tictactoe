@@ -4,19 +4,39 @@ const xlinkNS = "http://www.w3.org/1999/xlink";
 
 let i=0;
 
-board.onclick = addMark;
+board.onclick = onClick;
 
-function addMark(e) {
+function onClick(e) {
 	console.log(e.target, e.bubbles);
 	const target = e.target;
 	if(target.classList.contains("cell") && !target.hasChildNodes()) {
-		const svg = document.createElementNS(svgNS, "svg");
-		const use = document.createElementNS(svgNS, "use");
+		addMark(target, playerMark);
 
-		use.setAttributeNS(xlinkNS, "xlink:href", i++%2 ? "#circ" : "#cross");
+		// const aimove = ai.aiMove();
+	}
+}
 
-		svg.appendChild(use);
-		target.appendChild(svg);
+function addMark(cell, mark) {
+	const svg = document.createElementNS(svgNS, "svg");
+	const use = document.createElementNS(svgNS, "use");
+
+	use.setAttributeNS(xlinkNS, "href", mark === playerMark ? "#cross" : "#circ");
+
+	svg.appendChild(use);
+	cell.appendChild(svg);
+}
+
+
+board.addEventListener("animationend", onAnimationEnd);
+
+function onAnimationEnd(e) {
+	console.log("anim ended", e.animationName, e.target, cells.indexOf(e.target.parentNode));
+	playersTurn = !playersTurn;
+	if(!playersTurn && e.target.tagName === "svg" && e.animationName === "draw") {
+		const {aimove, winner} = ai.playerMove(cells.indexOf(e.target.parentNode));
+		// const {aimove, winner} = ai.aiMove();
+		console.log("adding ai mark to", aimove, "winner:", winner);
+		addMark(cells[aimove], aiMark);
 	}
 }
 
@@ -43,7 +63,8 @@ function generateBoard() {
 let cells;
 function emptyBoard() {
 	const clone = board.cloneNode(false);
-	clone.onclick = addMark;
+	clone.onclick = onClick;
+	clone.addEventListener("animationend", onAnimationEnd);
 	clone.className = "board arrive";
 	let fragment;
 	({clones: cells, fragment} = generateBoard());
@@ -53,9 +74,20 @@ function emptyBoard() {
 
 	board.parentNode.replaceChild(clone, board);
 	board = clone;
+
+	ai.resetGame(aiMark);
 }
 
 function fall() {
 	board.classList.remove("arrive");
 	board.classList.add("fall");
 }
+
+let playersTurn;
+const playerMark = "X", aiMark = "O";
+document.addEventListener("DOMContentLoaded", function() {
+	console.log("DOM fully loaded and parsed");
+	cells = Array.from(document.getElementsByClassName("cell"));
+	ai.setAIPlayer(aiMark);
+	playersTurn =true;
+  });
