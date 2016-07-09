@@ -23,7 +23,7 @@ const ai = (function () {
 
 // X goes first
 	const first = "X", second = "O";
-	let AI = first, PC = second, winner;
+	let AI = first, PC = second, predictedWinner, winner;
 
 	function setAIPlayer(mark) {
 		if(mark === first) {
@@ -41,14 +41,18 @@ const ai = (function () {
 
 	function aiMove() {
 		const aimove = minimax(4, AI).index;
-		if(aimove) board[aimove] = AI;
-		return {aimove, winner};
+		if(aimove != null) board[aimove] = AI;
+		return {aimove, predictedWinner, winner: isGameOver()};
 	}
 
 	function playerMove(ind) {
 		board[ind] = PC;
 		console.log("adding", PC, "to", ind);
 		return aiMove();
+	}
+
+	function getBoard() {
+		return board;
 	}
 
 	function resetBoard() {
@@ -67,11 +71,15 @@ const ai = (function () {
 
 	function getValidMoves() {
 		const emptyCellsIndexes = [];
-		if(winner = isGameOver()) return emptyCellsIndexes;
+		if(predictedWinner = isGameOver()) return emptyCellsIndexes;
 		board.forEach((v, ind) => {
 			if(v === null) emptyCellsIndexes.push(ind);
 		});
 		return emptyCellsIndexes;
+	}
+
+	function boardIsFilled() {
+		return !board.includes(null);
 	}
 
 	// returns winner if any
@@ -98,7 +106,7 @@ const ai = (function () {
 		}
 
 		// check if board is filled
-		if (!board.includes(null)) {
+		if (boardIsFilled()) {
 			return "tie";
 		}
 
@@ -118,6 +126,7 @@ const ai = (function () {
 				const currentInd = emptyCells[i];
 				const newState = state.slice();
 				newState[currentInd] = player;
+				board[currentInd] = player;
 
 				// first is a maximizing agent
 				if (player === first) {
@@ -134,7 +143,7 @@ const ai = (function () {
 						bestInd = currentInd;
 					}
 				} else throw new Error("Something went wrong; player is neither X nor O, it's", player);
-
+				board[currentInd] = null;
 			}
 		}
 
@@ -142,6 +151,7 @@ const ai = (function () {
 	}
 
 	function calculateScore(state) {
+		state = board;
 		let score = 0;
 
 		for(let i=0; i<3; ++i) {
@@ -223,6 +233,6 @@ const ai = (function () {
 		return 0;																									// XOX case
 	}
 
-	return {setAIPlayer, getMarks, aiMove, playerMove, resetGame, getMarkAt, isGameOver};
+	return {setAIPlayer, getMarks, aiMove, playerMove, resetGame, getMarkAt, isGameOver, getValidMoves, getBoard};
 
 })();
