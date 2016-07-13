@@ -15,6 +15,8 @@ button {
 $body-color: aliceblue;
 $cell-inner-shadow: inset 0 0 3px gray;
 $cell-outer-shadow: 1px 1px 5px gray;
+$cell-size: 100px;
+$cell-margin: 5px;
 
 html {
 	font-size: 16px;
@@ -42,6 +44,7 @@ div, span {
 
 .board {
 	background-color: rgba(116, 162, 116, 0.12);
+	min-width: 3 * ($cell-size + 2 * $cell-margin);
 	perspective: 200px;
 
 	&.spin .cell {
@@ -72,10 +75,10 @@ $arrive-delay: 0.1s;
 $fall-delay: 0.5s;
 
 .cell {
-	width: 100px;
-	height: 100px;
+	width: $cell-size;
+	height: $cell-size;
 	float: left;
-	margin: 5px;
+	margin: $cell-margin;
 	background-color: white;
 	transition: 1s transform, 1s box-shadow;
 	position: relative;
