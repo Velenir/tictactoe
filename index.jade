@@ -16,6 +16,13 @@ block content
 
 
 	main
+		.notification
+			//- .marks
+			svg.x
+				use(xlink:href="#cross")
+			svg.o
+				use(xlink:href="#circ")
+			p Choose player
 		.board
 			- for (let i = 0; i< 9; ++i)
 				.cell

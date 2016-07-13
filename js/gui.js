@@ -1,4 +1,5 @@
 let board = document.querySelector('.board');
+const notification = document.querySelector('.notification');
 const svgNS = "http://www.w3.org/2000/svg";
 const xlinkNS = "http://www.w3.org/1999/xlink";
 
@@ -47,6 +48,15 @@ function onAnimationEnd(e) {
 		console.log("Board recreated");
 		board.classList.remove("arrive");
 	}
+}
+
+function blockPointerEvents(block=true) {
+	board.style.pointerEvents = block ? "none" : "";
+}
+
+function showNotification(show=true) {
+	if(show) notification.classList.remove("hidden");
+	else notification.classList.add("hidden");
 }
 
 
