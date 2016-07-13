@@ -45,9 +45,10 @@ const ai = (function () {
 		return {aimove, predictedWinner, winner: isGameOver()};
 	}
 
-	function playerMove(ind) {
-		board[ind] = PC;
-		console.log("adding", PC, "to", ind);
+	function playerMove(x, y=1) {
+		if(x * y > 8) throw new RangeError("No such cell number on board: " + x*y);
+		board[x * y] = PC;
+		console.log("adding", PC, "to", x*y);
 		return aiMove();
 	}
 
@@ -114,35 +115,33 @@ const ai = (function () {
 		return null;
 	}
 
-	function minimax(depth, player, state = board) {
+	function minimax(depth, player) {
 		const emptyCells = getValidMoves();
 
 		let bestScore = (player === first) ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY, currentScore,	bestInd;
 
 		if (emptyCells.length === 0 || depth === 0) {
-			bestScore = calculateScore(state);
+			bestScore = calculateScore();
 		} else {
 			for (let i = 0; i < emptyCells.length; ++i) {
 				const currentInd = emptyCells[i];
-				const newState = state.slice();
-				newState[currentInd] = player;
 				board[currentInd] = player;
 
 				// first is a maximizing agent
 				if (player === first) {
-					currentScore = minimax(depth-1, second, newState).score;
+					currentScore = minimax(depth-1, second).score;
 					if (currentScore > bestScore) {
 						bestScore = currentScore;
 						bestInd = currentInd;
 					}
 				} else if (player === second) {
 					// second is a minimizing agent
-					currentScore = minimax(depth-1, first, newState).score;
+					currentScore = minimax(depth-1, first).score;
 					if (currentScore < bestScore) {
 						bestScore = currentScore;
 						bestInd = currentInd;
 					}
-				} else throw new Error("Something went wrong; player is neither X nor O, it's", player);
+				} else throw new Error("Something went wrong; player is neither X nor O, it's " + player);
 				board[currentInd] = null;
 			}
 		}
@@ -150,24 +149,23 @@ const ai = (function () {
 		return {score: bestScore, index: bestInd};
 	}
 
-	function calculateScore(state) {
-		state = board;
+	function calculateScore() {
 		let score = 0;
 
 		for(let i=0; i<3; ++i) {
 			// checking columns
 
 			let firstCount = 0, secondCount = 0, emptyCount = 0;
-			if(state[i*3] === first) ++firstCount;
-			else if(state[i*3] === second) ++secondCount;
+			if(board[i*3] === first) ++firstCount;
+			else if(board[i*3] === second) ++secondCount;
 			else ++emptyCount;
 
-			if(state[i*3+1] === first) ++firstCount;
-			else if(state[i*3+1] === second) ++secondCount;
+			if(board[i*3+1] === first) ++firstCount;
+			else if(board[i*3+1] === second) ++secondCount;
 			else ++emptyCount;
 
-			if(state[i*3+2] === first) ++firstCount;
-			else if(state[i*3+2] === second) ++secondCount;
+			if(board[i*3+2] === first) ++firstCount;
+			else if(board[i*3+2] === second) ++secondCount;
 			else ++emptyCount;
 
 			score += calculateScoreForLine(firstCount, secondCount, emptyCount);
@@ -175,16 +173,16 @@ const ai = (function () {
 
 			// checking rows
 			firstCount = secondCount = emptyCount = 0;
-			if(state[i] === first) ++firstCount;
-			else if(state[i] === second) ++secondCount;
+			if(board[i] === first) ++firstCount;
+			else if(board[i] === second) ++secondCount;
 			else ++emptyCount;
 
-			if(state[i+3] === first) ++firstCount;
-			else if(state[i+3] === second) ++secondCount;
+			if(board[i+3] === first) ++firstCount;
+			else if(board[i+3] === second) ++secondCount;
 			else ++emptyCount;
 
-			if(state[i+6] === first) ++firstCount;
-			else if(state[i+6] === second) ++secondCount;
+			if(board[i+6] === first) ++firstCount;
+			else if(board[i+6] === second) ++secondCount;
 			else ++emptyCount;
 
 			score += calculateScoreForLine(firstCount, secondCount, emptyCount);
@@ -193,29 +191,29 @@ const ai = (function () {
 			// checking diagonals
 			firstCount = secondCount = emptyCount = 0;
 			if(i===0) {
-				if(state[i] === first) ++firstCount;
-				else if(state[i] === second) ++secondCount;
+				if(board[i] === first) ++firstCount;
+				else if(board[i] === second) ++secondCount;
 				else ++emptyCount;
 
-				if(state[i+4] === first) ++firstCount;
-				else if(state[i+4] === second) ++secondCount;
+				if(board[i+4] === first) ++firstCount;
+				else if(board[i+4] === second) ++secondCount;
 				else ++emptyCount;
 
-				if(state[i+8] === first) ++firstCount;
-				else if(state[i+8] === second) ++secondCount;
+				if(board[i+8] === first) ++firstCount;
+				else if(board[i+8] === second) ++secondCount;
 				else ++emptyCount;
 				score += calculateScoreForLine(firstCount, secondCount, emptyCount);
 			} else if(i===2) {
-				if(state[i] === first) ++firstCount;
-				else if(state[i] === second) ++secondCount;
+				if(board[i] === first) ++firstCount;
+				else if(board[i] === second) ++secondCount;
 				else ++emptyCount;
 
-				if(state[i+2] === first) ++firstCount;
-				else if(state[i+2] === second) ++secondCount;
+				if(board[i+2] === first) ++firstCount;
+				else if(board[i+2] === second) ++secondCount;
 				else ++emptyCount;
 
-				if(state[i+4] === first) ++firstCount;
-				else if(state[i+4] === second) ++secondCount;
+				if(board[i+4] === first) ++firstCount;
+				else if(board[i+4] === second) ++secondCount;
 				else ++emptyCount;
 				score += calculateScoreForLine(firstCount, secondCount, emptyCount);
 			}
