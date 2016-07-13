@@ -13,6 +13,8 @@ button {
 
 // $text-color: #655330;
 $body-color: aliceblue;
+$cell-inner-shadow: inset 0 0 3px gray;
+$cell-outer-shadow: 1px 1px 5px gray;
 
 html {
 	font-size: 16px;
@@ -69,10 +71,10 @@ $fall-delay: 0.5s;
 	float: left;
 	margin: 5px;
 	background-color: white;
-	transition: 1s transform;
+	transition: 1s transform, 1s box-shadow;
 	position: relative;
 	transform-style: preserve-3d;
-	box-shadow: inset 0 0 3px gray;
+	box-shadow: $cell-inner-shadow, $cell-outer-shadow;
 
 	// animation: 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) scaleBounce;
 	// animation: 1s arrive;
@@ -92,6 +94,7 @@ $fall-delay: 0.5s;
 
 	&:active {
 		transform: none !important;
+		box-shadow: $cell-inner-shadow, $cell-outer-shadow !important;
 	}
 
 	@for $i from 1 through 9 {
@@ -102,6 +105,18 @@ $fall-delay: 0.5s;
 				$x: if($i <= 3, 1, if($i >= 7, -1, 0));
 				$y: if(($i+3) % 3 == 1, -1, if(($i+3) % 3 == 2, 0, 1));
 				transform: rotate3d($x, $y, 0, 10deg);
+			}
+
+			@if $i <=3 {
+				box-shadow: $cell-inner-shadow, 1px 10px 5px -5px gray;
+			} @else if $i == 4 {
+				box-shadow: $cell-inner-shadow, 10px 1px 5px -5px gray;
+			} @else if $i == 5 {
+				box-shadow: $cell-inner-shadow;
+			} @else if $i == 6 {
+				box-shadow: $cell-inner-shadow, -10px 1px 5px -5px gray;
+			} @else if $i >= 7 {
+				box-shadow: $cell-inner-shadow, 1px -10px 5px -5px gray;
 			}
 		}
 
@@ -177,16 +192,18 @@ $fall-delay: 0.5s;
 		top: 0;
 		left: 0;
 		transform: rotateY(0) rotateX(0) scale(1);
-	}
-	@for $i from 3 through 9 {
-		#{$i*10}% {
-			left: 25px - random(50);
-		}
+		box-shadow: $cell-inner-shadow, $cell-outer-shadow;
 	}
 	20% {
 		top: -50px;
 		left: 0;
 		opacity: 1;
+		box-shadow: $cell-inner-shadow;
+	}
+	@for $i from 3 through 9 {
+		#{$i*10}% {
+			left: 25px - random(50);
+		}
 	}
 	100% {
 		top: 300px;
@@ -218,12 +235,17 @@ $fall-delay: 0.5s;
 }
 
 @keyframes arrive {
-	from {
+	0% {
 		top: -500px;
 		opacity: 0;
+		box-shadow: $cell-inner-shadow;
 	}
-	to {
+	30% {
+		box-shadow: $cell-inner-shadow, 0 0 0 gray;
+	}
+	100% {
 		top: 0;
 		opacity: 1;
+		box-shadow: $cell-inner-shadow, $cell-outer-shadow;
 	}
 }
