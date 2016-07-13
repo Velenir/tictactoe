@@ -23,7 +23,7 @@ const ai = (function () {
 
 // X goes first
 	const first = "X", second = "O";
-	let AI = first, PC = second, predictedWinner, winner;
+	let AI = first, PC = second;
 
 	function setAIPlayer(mark) {
 		if(mark === first) {
@@ -42,7 +42,7 @@ const ai = (function () {
 	function aiMove() {
 		const aimove = minimax(4, AI).index;
 		if(aimove != null) board[aimove] = AI;
-		return {aimove, predictedWinner, winner: isGameOver()};
+		return {aimove, winner: isGameOver()};
 	}
 
 	function playerMove(x, y=1) {
@@ -72,7 +72,7 @@ const ai = (function () {
 
 	function getValidMoves() {
 		const emptyCellsIndexes = [];
-		if(predictedWinner = isGameOver()) return emptyCellsIndexes;
+		if( isGameOver()) return emptyCellsIndexes;
 		board.forEach((v, ind) => {
 			if(v === null) emptyCellsIndexes.push(ind);
 		});

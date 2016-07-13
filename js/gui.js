@@ -33,9 +33,9 @@ function onAnimationEnd(e) {
 	console.log("anim ended", e.animationName, e.target, cells.indexOf(e.target.parentNode));
 	playersTurn = !playersTurn;
 	if(!playersTurn && e.target.tagName === "svg" && e.animationName === "draw") {
-		const {aimove, predictedWinner, winner} = ai.playerMove(cells.indexOf(e.target.parentNode));
+		const {aimove, winner} = ai.playerMove(cells.indexOf(e.target.parentNode));
 		// const {aimove, winner} = ai.aiMove();
-		console.log("adding ai mark to", aimove, "predictedWinner:", predictedWinner, "winner:", winner);
+		console.log("adding ai mark to", aimove, "winner:", winner);
 		addMark(cells[aimove], aiMark);
 	}
 }
