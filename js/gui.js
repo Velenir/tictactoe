@@ -31,12 +31,21 @@ board.addEventListener("animationend", onAnimationEnd);
 
 function onAnimationEnd(e) {
 	console.log("anim ended", e.animationName, e.target, cells.indexOf(e.target.parentNode));
-	playersTurn = !playersTurn;
-	if(!playersTurn && e.target.tagName === "svg" && e.animationName === "draw") {
-		const {aimove, winner} = ai.playerMove(cells.indexOf(e.target.parentNode));
-		// const {aimove, winner} = ai.aiMove();
-		console.log("adding ai mark to", aimove, "winner:", winner);
-		addMark(cells[aimove], aiMark);
+	if(e.animationName === "draw") {
+		console.log("Mark drawn");
+		playersTurn = !playersTurn;
+		if(!playersTurn) {
+			const {aimove, winner} = ai.playerMove(cells.indexOf(e.target.parentNode));
+			// const {aimove, winner} = ai.aiMove();
+			console.log("adding ai mark to", aimove, "winner:", winner);
+			if(!winner)addMark(cells[aimove], aiMark);
+			// else proclaimWinner(winner);
+		}
+	} else if(e.animationName === "fall" && e.target === cells[8]) {
+		console.log("Board cleared");
+	} else if(e.animationName === "arrive" && e.target === cells[0]) {
+		console.log("Board recreated");
+		board.classList.remove("arrive");
 	}
 }
 

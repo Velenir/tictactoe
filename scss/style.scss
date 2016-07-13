@@ -47,13 +47,19 @@ div, span {
 	&.spin .cell {
 		animation: 6s infinite alternate spin;
 	}
-	&.fall .cell {
-		animation: 6s forwards fall;
+	&.fall {
+		pointer-events: none;
+		.cell {
+			animation: 6s forwards fall;
+		}
 	}
 
-	&.arrive .cell {
-		animation: 1s forwards arrive;
-		opacity: 0;
+	&.arrive {
+		pointer-events: none;
+		.cell {
+			animation: 1s forwards arrive;
+			opacity: 0;
+		}
 	}
 
 
