@@ -14,6 +14,7 @@ button {
 // $text-color: #655330;
 $body-color: aliceblue;
 $notification-color: #e8f1f6;
+$notification-symbol-color: #475ba2;
 $cell-inner-shadow: inset 0 0 3px gray;
 $cell-outer-shadow: 1px 1px 5px gray;
 $cell-size: 100px;
@@ -38,6 +39,7 @@ main {
 	justify-content: center;
 	align-items: center;
 	position: relative;
+	overflow: hidden;
 }
 
 div, span {
@@ -78,35 +80,78 @@ div, span {
 	position: absolute;
 	top: 100px;
 	left: 50%;
+	width: 200px;
 	transform: translateX(-50%);
-	$notification-color: #e8f1f6;
+	background-color: $notification-color;
 	border: 1px solid gray;
 	box-shadow: inset 0 0 3px gray, 0 8px 5px -3px gray;
-	transition: 0.7s cubic-bezier(0.49, 1.16, 0.84, 1.35) top;
+	// transition: 0.7s cubic-bezier(0.49, 1.16, 0.84, 1.35) top;
 	z-index: 2;
+	text-align: center;
 
 	&.hidden {
 		top: -200px;
 	}
 
-	> svg {
-		stroke: #475ba2;
-		stroke-width: 7;
-		width: 100px;
-		height: 100px;
+	&.inbound {
+		animation: 0.5s cubic-bezier(0.49, 1.16, 0.84, 1.35) inbound;
+	}
 
-		&.o {
-			padding: 6px;
-		}
+	&.outbound {
+		animation: 1s linear forwards outbound;
+	}
 
-		&:hover {
-			stroke-width: 7.7;
-			background-color: rgba(0, 0, 0, 0.04);
+	> .tie {
+		display: none;
+	}
+
+	&.X {
+		> .O {
+			display: none;
 		}
 	}
 
-	> p {
-		text-align: center;
+	&.O {
+		> .X {
+			display: none;
+		}
+	}
+
+	&.tie {
+		> .O, > .X {
+			display: none;
+		}
+		> .tie {
+			display: unset;
+		}
+	}
+
+	> svg {
+		stroke: $notification-symbol-color;
+		stroke-width: 7;
+		width: 50%;
+		height: 100px;
+
+		&.X, &.O {
+			cursor: pointer;
+		}
+
+		&.O, &.tie {
+			padding: 6px;
+		}
+
+		&.X:hover, &.O:hover {
+			stroke-width: 7.7;
+			background-color: rgba(0, 0, 0, 0.04);
+		}
+
+		&.tie {
+			stroke-width: 3;
+			color: $notification-symbol-color;
+		}
+	}
+
+	> .txt {
 		font-family: monospace;
 		text-transform: uppercase;
 		margin-top: 0;
@@ -299,5 +344,17 @@ $fall-delay: 0.5s;
 		top: 0;
 		opacity: 1;
 		box-shadow: $cell-inner-shadow, $cell-outer-shadow;
+	}
+}
+
+@keyframes inbound {
+	from {
+		top: -200px;
+	}
+}
+
+@keyframes outbound {
+	to {
+		top: 100vh;
 	}
 }

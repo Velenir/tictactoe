@@ -1,5 +1,6 @@
 let board = document.querySelector('.board');
 const notification = document.querySelector('.notification');
+const notificationText = notification.querySelector(".txt");
 const svgNS = "http://www.w3.org/2000/svg";
 const xlinkNS = "http://www.w3.org/1999/xlink";
 
@@ -40,14 +41,35 @@ function onAnimationEnd(e) {
 			// const {aimove, winner} = ai.aiMove();
 			console.log("adding ai mark to", aimove, "winner:", winner);
 			if(!winner)addMark(cells[aimove], aiMark);
-			// else proclaimWinner(winner);
+			else declareWinner(winner);
 		}
 	} else if(e.animationName === "fall" && e.target === cells[8]) {
 		console.log("Board cleared");
+		showNotification(false);
 	} else if(e.animationName === "arrive" && e.target === cells[0]) {
 		console.log("Board recreated");
 		board.classList.remove("arrive");
 	}
+}
+
+notification.addEventListener("animationend", function (e) {
+	if(e.animationName === "inbound" && notification.mode === "game over") {
+		fall();
+	} else if(e.animationName === "outbound") {
+		if(notification.mode === "game over") {
+			presentPlayerChoice();
+		} else if(notification.mode === "player selection") {
+			emptyBoard();
+		}
+	}
+});
+
+function declareWinner(winner) {
+	notification.mode = "game over";
+	notification.classList.add(winner);
+
+	notificationText.textContent = winner === "tie" ? "It's a tie" : "won";
+	showNotification();
 }
 
 function blockPointerEvents(block=true) {
@@ -55,8 +77,16 @@ function blockPointerEvents(block=true) {
 }
 
 function showNotification(show=true) {
-	if(show) notification.classList.remove("hidden");
-	else notification.classList.add("hidden");
+	if(show) {
+		blockPointerEvents();
+		notification.classList.remove("outbound");
+		notification.classList.add("inbound");
+	}
+	else {
+		notification.classList.add("outbound");
+		notification.classList.remove("inbound");
+		blockPointerEvents(false);
+	}
 }
 
 
@@ -79,6 +109,14 @@ function generateBoard() {
 	return {clones, fragment};
  }
 
+function presentPlayerChoice() {
+	notification.mode = "player selection";
+	notification.classList.remove("X", "O", "tie");
+	// notification.classList.add("select-player");
+	notificationText.textContent = "Choose player";
+	showNotification();
+}
+
 let cells;
 function emptyBoard() {
 	const clone = board.cloneNode(false);
@@ -98,7 +136,7 @@ function emptyBoard() {
 }
 
 function fall() {
-	board.classList.remove("arrive");
+	// board.classList.remove("arrive");
 	board.classList.add("fall");
 }
 
