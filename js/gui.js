@@ -148,7 +148,7 @@ function showNotification(show=true) {
 	}
 	else {
 		notification.classList.add("outbound");
-		notification.classList.remove("inbound");
+		notification.classList.remove("inbound", "selection");
 		blockPointerEvents(false);
 	}
 }
@@ -176,7 +176,7 @@ function generateBoard() {
 function presentPlayerChoice() {
 	notification.mode = "player selection";
 	notification.classList.remove("X", "O", "tie");
-	// notification.classList.add("select-player");
+	notification.classList.add("selection");
 	notificationText.textContent = "Choose player";
 	showNotification();
 }

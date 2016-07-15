@@ -12,9 +12,10 @@ button {
 }
 
 // $text-color: #655330;
-$body-color: aliceblue;
-$notification-color: #e8f1f6;
-$notification-symbol-color: #475ba2;
+$body-color: #cedfef;
+$notification-color: white;
+$symbol-color: #475ba2;
+$cell-color: $notification-color;
 $cell-inner-shadow: inset 0 0 3px gray;
 $cell-outer-shadow: 1px 1px 5px gray;
 $cell-size: 100px;
@@ -50,6 +51,7 @@ div, span {
 	background-color: rgba(116, 162, 116, 0.12);
 	min-width: 3 * ($cell-size + 2 * $cell-margin);
 	perspective: 200px;
+	transition: 0.5s opacity;
 
 	&.spin .cell {
 		animation: 6s infinite alternate spin;
@@ -98,7 +100,7 @@ div, span {
 	}
 
 	&.outbound {
-		animation: 1s linear forwards outbound;
+		animation: 0.4s linear forwards outbound;
 	}
 
 	&.X > svg, &.O > svg, use {
@@ -130,8 +132,14 @@ div, span {
 		}
 	}
 
+	&.tie, &.X, &.O, &.selection {
+		+ .board {
+			opacity: 0.5;
+		}
+	}
+
 	> svg {
-		stroke: $notification-symbol-color;
+		stroke: $symbol-color;
 		stroke-width: 7;
 		width: 50%;
 		height: 100px;
@@ -151,7 +159,7 @@ div, span {
 
 		&.tie {
 			stroke-width: 3;
-			color: $notification-symbol-color;
+			color: $symbol-color;
 		}
 	}
 
@@ -171,7 +179,7 @@ $fall-delay: 0.5s;
 	height: $cell-size;
 	float: left;
 	margin: $cell-margin;
-	background-color: white;
+	background-color: $cell-color;
 	transition: 1s transform, 1s box-shadow;
 	position: relative;
 	transform-style: preserve-3d;
@@ -181,7 +189,7 @@ $fall-delay: 0.5s;
 	// animation: 1s arrive;
 
 	> svg {
-		stroke: black;
+		stroke: $symbol-color;
 		stroke-width: 7;
 		width: 100%;
 		height: 100%;
@@ -353,12 +361,12 @@ $fall-delay: 0.5s;
 
 @keyframes inbound {
 	from {
-		top: -200px;
+		left: 100vw;
 	}
 }
 
 @keyframes outbound {
 	to {
-		top: 100vh;
+		left: -200px;
 	}
 }
