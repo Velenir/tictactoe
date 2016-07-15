@@ -14,7 +14,6 @@ block content
 
 	main
 		.notification
-			//- .marks
 			svg.X
 				use(xlink:href="#cross")
 			svg.tie(xmlns='http://www.w3.org/2000/svg', viewBox="0 0 100 100")
@@ -27,7 +26,7 @@ block content
 			svg.O
 				use(xlink:href="#circ")
 			p.txt Choose player
-		.board
+		.board(style="pointer-events:none;")
 			- for (let i = 0; i< 9; ++i)
 				.cell
 					//- svg

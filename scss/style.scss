@@ -57,7 +57,7 @@ div, span {
 	&.fall {
 		pointer-events: none;
 		.cell {
-			animation: 6s forwards fall;
+			animation: 6s ease-out forwards fall;
 		}
 	}
 
@@ -99,6 +99,10 @@ div, span {
 
 	&.outbound {
 		animation: 1s linear forwards outbound;
+	}
+
+	&.X > svg, &.O > svg, use {
+		pointer-events: none;
 	}
 
 	> .tie {
