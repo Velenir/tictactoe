@@ -35,6 +35,10 @@ const ai = (function () {
 		}	else throw new Error("no such mark: " + mark);
 	}
 
+	function setPCPlayer(mark) {
+		setAIPlayer(mark === first ? second : mark === second ? first : mark);
+	}
+
 	function getMarks() {
 		return {AI, PC};
 	}
@@ -48,7 +52,7 @@ const ai = (function () {
 	function playerMove(x, y=1) {
 		if(x * y > 8) throw new RangeError("No such cell number on board: " + x*y);
 		board[x * y] = PC;
-		console.log("adding", PC, "to", x*y);
+		console.log("LOGIC: adding", PC, "to", x*y);
 		return aiMove();
 	}
 
@@ -61,9 +65,9 @@ const ai = (function () {
 	}
 
 	function resetGame(AIMark) {
-		setAIPlayer(AIMark);
+		// setAIPlayer(AIMark);
 		resetBoard();
-		if(AIMark === first) return aiMove();
+		if(AI === first) return aiMove();
 	}
 
 	function getMarkAt(x, y) {
@@ -119,9 +123,10 @@ const ai = (function () {
 		const emptyCells = getValidMoves();
 
 		let bestScore = (player === first) ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY, currentScore,	bestInd;
+		// const accum = [];
 
 		if (emptyCells.length === 0 || depth === 0) {
-			bestScore = calculateScore();
+			bestScore = calculateScore()*(depth+1);
 		} else {
 			for (let i = 0; i < emptyCells.length; ++i) {
 				const currentInd = emptyCells[i];
@@ -133,6 +138,7 @@ const ai = (function () {
 					if (currentScore > bestScore) {
 						bestScore = currentScore;
 						bestInd = currentInd;
+						// accum.push({i: bestInd, s: bestScore, p: player});
 					}
 				} else if (player === second) {
 					// second is a minimizing agent
@@ -140,12 +146,16 @@ const ai = (function () {
 					if (currentScore < bestScore) {
 						bestScore = currentScore;
 						bestInd = currentInd;
+						// accum.push({i: bestInd, s: bestScore, p: player});
 					}
 				} else throw new Error("Something went wrong; player is neither X nor O, it's " + player);
 				board[currentInd] = null;
 			}
 		}
-
+		// const chosenB = board.slice();
+		// chosenB[bestInd] = player;
+		// console.log("CHOSEN board", chosenB, "score", bestScore);
+		// console.log("accum", accum);
 		return {score: bestScore, index: bestInd};
 	}
 
@@ -218,6 +228,7 @@ const ai = (function () {
 				score += calculateScoreForLine(firstCount, secondCount, emptyCount);
 			}
 		}
+		// console.log("board", board, "score", score);
 		return score;
 	}
 
@@ -231,6 +242,6 @@ const ai = (function () {
 		return 0;																									// XOX case
 	}
 
-	return {setAIPlayer, getMarks, aiMove, playerMove, resetGame, getMarkAt, isGameOver, getValidMoves, getBoard};
+	return {setAIPlayer, setPCPlayer, getMarks, aiMove, playerMove, resetGame, getMarkAt, isGameOver, getValidMoves, getBoard};
 
 })();
