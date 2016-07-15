@@ -1,4 +1,14 @@
-const ai = (function () {
+const easymodeOn = document.getElementById("easymode");
+
+function randomizedEasyMode() {
+	if(!easymodeOn.checked) return false;
+	// return true;
+	return Math.random() > 0.5;
+}
+
+
+
+const ai = (function (easymode) {
 
 	let board = Array(9).fill(null);
 	// +--------------> X
@@ -22,7 +32,7 @@ const ai = (function () {
 
 
 // X goes first
-	const first = "X", second = "O";
+	const first = "X", second = "O", startDepth = 4;
 	let AI = first, PC = second;
 
 	function setAIPlayer(mark) {
@@ -44,7 +54,7 @@ const ai = (function () {
 	}
 
 	function aiMove() {
-		const aimove = minimax(4, AI).index;
+		const aimove = minimax(startDepth, AI).index;
 		if(aimove != null) board[aimove] = AI;
 		return {aimove, winner: isGameOver()};
 	}
@@ -122,7 +132,7 @@ const ai = (function () {
 	function minimax(depth, player) {
 		const emptyCells = getValidMoves();
 
-		let bestScore = (player === first) ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY, currentScore,	bestInd;
+		let bestScore = (player === first) ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY, secondBestScore, currentScore, bestInd, secondBestInd;
 		// const accum = [];
 
 		if (emptyCells.length === 0 || depth === 0) {
@@ -136,7 +146,9 @@ const ai = (function () {
 				if (player === first) {
 					currentScore = minimax(depth-1, second).score;
 					if (currentScore > bestScore) {
+						secondBestScore = bestScore;
 						bestScore = currentScore;
+						secondBestInd = bestInd;
 						bestInd = currentInd;
 						// accum.push({i: bestInd, s: bestScore, p: player});
 					}
@@ -144,7 +156,9 @@ const ai = (function () {
 					// second is a minimizing agent
 					currentScore = minimax(depth-1, first).score;
 					if (currentScore < bestScore) {
+						secondBestScore = bestScore;
 						bestScore = currentScore;
+						secondBestInd = bestInd;
 						bestInd = currentInd;
 						// accum.push({i: bestInd, s: bestScore, p: player});
 					}
@@ -156,6 +170,16 @@ const ai = (function () {
 		// chosenB[bestInd] = player;
 		// console.log("CHOSEN board", chosenB, "score", bestScore);
 		// console.log("accum", accum);
+		// relax algorithm for outer minmax based on easymode
+		// if(depth === startDepth) {
+		// 	console.log("bestScore", bestScore, "bestInd", bestInd);
+		// 	console.log("secondBestScore", secondBestScore, "secondBestInd", secondBestInd);
+		// 	console.log("easymode", typeof easymode === "function" ? easymode() : easymode);
+		// }
+		if(secondBestScore != undefined && secondBestInd != undefined && (typeof easymode === "function" ? easymode() : easymode) && depth === startDepth) {
+			console.log("EASYMODE");
+			return {score: secondBestScore, index: secondBestInd};
+		}
 		return {score: bestScore, index: bestInd};
 	}
 
@@ -244,4 +268,4 @@ const ai = (function () {
 
 	return {setAIPlayer, setPCPlayer, getMarks, aiMove, playerMove, resetGame, getMarkAt, isGameOver, getValidMoves, getBoard};
 
-})();
+})(randomizedEasyMode);
