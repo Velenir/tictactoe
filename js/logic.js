@@ -56,7 +56,10 @@ const ai = (function (easymode) {
 	function aiMove() {
 		const aimove = minimax(startDepth, AI).index;
 		if(aimove != null) board[aimove] = AI;
-		return {aimove, winner: isGameOver()};
+		// const gameOver = isGameOver();
+		// const {winner, line} = isGameOver();
+		// return {aimove, winner, line};
+		return Object.assign({aimove}, isGameOver());
 	}
 
 	function playerMove(x, y=1) {
@@ -103,26 +106,26 @@ const ai = (function (easymode) {
 		for(let i=0; i<3; ++i) {
 			// checking columns
 			if(board[i*3] && board[i*3] === board[i*3+1] && board[i*3] === board[i*3+2]) {
-				return board[i*3];
+				return {winner: board[i*3], line: [i*3, i*3+1, i*3+2]};
 			}
 
 			// checking rows
 			if(board[i] && board[i] === board[i+3] && board[i] === board[i+6]) {
-				return board[i];
+				return {winner: board[i], line: [i, i+3, i+6]};
 			}
 
 			// checking diagonals
 			if((i===0) && board[i] && board[i] === board[i+4] && board[i] === board[i+8]) {
-				return board[i];
+				return {winner: board[i], line: [i, i+4, i+8]};
 			}
 			if((i===2) && board[i] && board[i] === board[i+2] && board[i] === board[i+4]) {
-				return board[i];
+				return {winner: board[i], line: [i, i+2, i+4]};
 			}
 		}
 
 		// check if board is filled
 		if (boardIsFilled()) {
-			return "tie";
+			return {winner: "tie"};
 		}
 
 		// no winner yet

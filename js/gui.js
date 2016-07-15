@@ -8,7 +8,7 @@ let i=0;
 
 board.onclick = onClick;
 
-let markQueue = [], currentGameWinner;
+let markQueue = [], currentGameWinner, winningLine;
 function onClick(e) {
 	console.log(e.target, e.bubbles);
 	const target = e.target;
@@ -24,11 +24,12 @@ function onClick(e) {
 			console.log("pushed mark", playerMark, "to queue wit cell ===", target);
 		}
 
-		const {aimove, winner} = ai.playerMove(cells.indexOf(target));
+		const {aimove, winner, line} = ai.playerMove(cells.indexOf(target));
 		// const {aimove, winner} = ai.aiMove();
 		console.log("adding ai mark to", aimove, cells[aimove], "winner:", winner);
 		if(aimove != null) markQueue.push({cell: cells[aimove], mark: aiMark});
 		currentGameWinner = winner;
+		winningLine = line;
 		// if(!winner)addMark(cells[aimove], aiMark);
 		// else {
 		// 	addMark(cells[aimove], aiMark);
@@ -62,7 +63,8 @@ function onAnimationEnd(e) {
 
 		} else if(currentGameWinner) {
 			console.log("HAVE WINNER", currentGameWinner);
-			declareWinner(currentGameWinner);
+			if(winningLine) highlightLine(winningLine);
+			else declareWinner(currentGameWinner);
 		}
 
 		// playersTurn = !playersTurn;
@@ -82,6 +84,9 @@ function onAnimationEnd(e) {
 	} else if(e.animationName === "arrive" && e.target === cells[0]) {
 		console.log("Board recreated");
 		board.classList.remove("arrive");
+	} else if(e.animationName === "flare") {
+		console.log("After Highlight");
+		declareWinner(currentGameWinner);
 	}
 }
 
@@ -153,6 +158,12 @@ function showNotification(show=true) {
 	}
 }
 
+function highlightLine(line) {
+	for(let ind of line) {
+		cells[ind].classList.add("highlighted");
+	}
+}
+
 
 function generateBoard() {
 	const clones = [];
@@ -199,7 +210,7 @@ function emptyBoard() {
 function resetGame() {
 	emptyBoard();
 	markQueue = [];
-	currentGameWinner = undefined;
+	winningLine = currentGameWinner = undefined;
 	// const aimove = ai.resetGame();
 	// if(aimove) addMark(cells[aimove.aimove], aiMark);
 }

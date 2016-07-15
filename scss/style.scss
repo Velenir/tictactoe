@@ -249,6 +249,17 @@ $fall-delay: 0.5s;
 	// .arrive &:nth-child(2), .arrive &:nth-child(3), .arrive &:nth-child(6), .arrive &:nth-child(9) {
 	// 	animation-delay: 2.4s;
 	// }
+
+	&.highlighted > svg {
+		// background-color: blanchedalmond;
+		animation: 1s flare;
+	}
+}
+
+@keyframes flare {
+	10% {
+		background-color: lighten($symbol-color, 20%);
+	}
 }
 
 @keyframes spin {
