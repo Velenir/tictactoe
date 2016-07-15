@@ -56,16 +56,13 @@ const ai = (function (easymode) {
 	function aiMove() {
 		const aimove = minimax(startDepth, AI).index;
 		if(aimove != null) board[aimove] = AI;
-		// const gameOver = isGameOver();
-		// const {winner, line} = isGameOver();
-		// return {aimove, winner, line};
 		return Object.assign({aimove}, isGameOver());
 	}
 
 	function playerMove(x, y=1) {
 		if(x * y > 8) throw new RangeError("No such cell number on board: " + x*y);
 		board[x * y] = PC;
-		console.log("LOGIC: adding", PC, "to", x*y);
+		// console.log("LOGIC: adding", PC, "to", x*y);
 		return aiMove();
 	}
 
@@ -77,8 +74,7 @@ const ai = (function (easymode) {
 		board = Array(9).fill(null);
 	}
 
-	function resetGame(AIMark) {
-		// setAIPlayer(AIMark);
+	function resetGame() {
 		resetBoard();
 		if(AI === first) return aiMove();
 	}
@@ -136,7 +132,6 @@ const ai = (function (easymode) {
 		const emptyCells = getValidMoves();
 
 		let bestScore = (player === first) ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY, secondBestScore, currentScore, bestInd, secondBestInd;
-		// const accum = [];
 
 		if (emptyCells.length === 0 || depth === 0) {
 			bestScore = calculateScore()*(depth+1);
@@ -153,7 +148,6 @@ const ai = (function (easymode) {
 						bestScore = currentScore;
 						secondBestInd = bestInd;
 						bestInd = currentInd;
-						// accum.push({i: bestInd, s: bestScore, p: player});
 					}
 				} else if (player === second) {
 					// second is a minimizing agent
@@ -163,24 +157,14 @@ const ai = (function (easymode) {
 						bestScore = currentScore;
 						secondBestInd = bestInd;
 						bestInd = currentInd;
-						// accum.push({i: bestInd, s: bestScore, p: player});
 					}
 				} else throw new Error("Something went wrong; player is neither X nor O, it's " + player);
 				board[currentInd] = null;
 			}
 		}
-		// const chosenB = board.slice();
-		// chosenB[bestInd] = player;
-		// console.log("CHOSEN board", chosenB, "score", bestScore);
-		// console.log("accum", accum);
-		// relax algorithm for outer minmax based on easymode
-		// if(depth === startDepth) {
-		// 	console.log("bestScore", bestScore, "bestInd", bestInd);
-		// 	console.log("secondBestScore", secondBestScore, "secondBestInd", secondBestInd);
-		// 	console.log("easymode", typeof easymode === "function" ? easymode() : easymode);
-		// }
+
 		if(secondBestScore != undefined && secondBestInd != undefined && (typeof easymode === "function" ? easymode() : easymode) && depth === startDepth) {
-			console.log("EASYMODE");
+			// console.log("EASYMODE");
 			return {score: secondBestScore, index: secondBestInd};
 		}
 		return {score: bestScore, index: bestInd};
@@ -255,7 +239,6 @@ const ai = (function (easymode) {
 				score += calculateScoreForLine(firstCount, secondCount, emptyCount);
 			}
 		}
-		// console.log("board", board, "score", score);
 		return score;
 	}
 
@@ -269,6 +252,6 @@ const ai = (function (easymode) {
 		return 0;																									// XOX case
 	}
 
-	return {setAIPlayer, setPCPlayer, getMarks, aiMove, playerMove, resetGame, getMarkAt, isGameOver, getValidMoves, getBoard};
+	return {setAIPlayer, setPCPlayer, getMarks, playerMove, resetGame, getMarkAt, isGameOver};
 
 })(randomizedEasyMode);

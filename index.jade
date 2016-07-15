@@ -10,8 +10,6 @@ block content
 					path(d='M23.908 76.467V23.783l59.105-.826-18.33 18.388-1.625 16.185 20.257 19.935z')
 			path(d='M25.314 25.314l49.498 49.498-.124-49.5-49.624 49.624', clip-path='url(#a)', fill='none', stroke-linecap='round', stroke-linejoin='round')
 
-
-
 	main
 		.notification.selection
 			svg.X
@@ -29,11 +27,7 @@ block content
 		.board(style="pointer-events:none;")
 			- for (let i = 0; i< 9; ++i)
 				.cell
-					//- svg
-						use(xlink:href=(i%2 ? "#circ" : "#cross"))
 						
 		label.easymode
 			input#easymode(type="checkbox")
-			span let me win sometimes
-		
-			
+			span let me win sometimes			

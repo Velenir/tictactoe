@@ -4,39 +4,26 @@ const notificationText = notification.querySelector(".txt");
 const svgNS = "http://www.w3.org/2000/svg";
 const xlinkNS = "http://www.w3.org/1999/xlink";
 
-let i=0;
-
 board.onclick = onClick;
 
-let markQueue = [], currentGameWinner, winningLine;
+let markQueue = [], currentGameWinner, winningLine, playerMark, aiMark;
 function onClick(e) {
-	console.log(e.target, e.bubbles);
 	const target = e.target;
 	if(target.classList.contains("cell") && !target.hasChildNodes() && !currentGameWinner && !markQueue.find(({cell}) => cell === target)) {
 		if (markQueue.length === 0)	{
 			addMark(target, playerMark);
-			console.log("added mark", playerMark, "to cell", target);
+			// console.log("added mark", playerMark, "to cell", target);
 		}
 		else {
-			// const {cell, mark} = markQueue.shift();
 			markQueue.push({cell: target, mark: playerMark});
-			// addMark(cell, mark);
-			console.log("pushed mark", playerMark, "to queue wit cell ===", target);
+			// console.log("pushed mark", playerMark, "to queue wit cell ===", target);
 		}
 
 		const {aimove, winner, line} = ai.playerMove(cells.indexOf(target));
-		// const {aimove, winner} = ai.aiMove();
-		console.log("adding ai mark to", aimove, cells[aimove], "winner:", winner);
+		// console.log("pushing ai mark to", aimove, cells[aimove], "winner:", winner);
 		if(aimove != null) markQueue.push({cell: cells[aimove], mark: aiMark});
 		currentGameWinner = winner;
 		winningLine = line;
-		// if(!winner)addMark(cells[aimove], aiMark);
-		// else {
-		// 	addMark(cells[aimove], aiMark);
-		// 	declareWinner(winner);
-		// }
-
-		// const aimove = ai.aiMove();
 	}
 }
 
@@ -53,67 +40,44 @@ function addMark(cell, mark) {
 
 board.addEventListener("animationend", onAnimationEnd);
 
-function onAnimationEnd(e) {
-	console.log("anim ended", e.animationName, e.target, cells.indexOf(e.target.parentNode));
-	if(e.animationName === "draw") {
-		console.log("Mark drawn");
+function onAnimationEnd({target, animationName}) {
+	// console.log("anim ended", animationName, target);
+	if(animationName === "draw") {
+		// console.log("Mark drawn on", target);
 		if(markQueue.length > 0) {
 			const {cell, mark} = markQueue.shift();
 			addMark(cell, mark);
 
 		} else if(currentGameWinner) {
-			console.log("HAVE WINNER", currentGameWinner);
+			// console.log("HAVE WINNER", currentGameWinner);
 			if(winningLine) highlightLine(winningLine);
 			else declareWinner(currentGameWinner);
 		}
-
-		// playersTurn = !playersTurn;
-		// if(!playersTurn) {
-		// 	const {aimove, winner} = ai.playerMove(cells.indexOf(e.target.parentNode));
-		// 	// const {aimove, winner} = ai.aiMove();
-		// 	console.log("adding ai mark to", aimove, "winner:", winner);
-		// 	if(!winner)addMark(cells[aimove], aiMark);
-		// 	else {
-		// 		addMark(cells[aimove], aiMark);
-		// 		declareWinner(winner);
-		// 	}
-		// }
-	} else if(e.animationName === "fall" && e.target === cells[3] && notification.mode === "game over") {
-		console.log("Board cleared");
+	} else if(animationName === "fall" && target === cells[3] && notification.mode === "game over") {
+		// console.log("Board cleared");
 		showNotification(false);
-	} else if(e.animationName === "arrive" && e.target === cells[0]) {
-		console.log("Board recreated");
+	} else if(animationName === "arrive" && target === cells[0]) {
+		// console.log("Board recreated");
 		board.classList.remove("arrive");
-	} else if(e.animationName === "flare") {
-		console.log("After Highlight");
+	} else if(animationName === "flare") {
+		// console.log("Highlight ended");
 		declareWinner(currentGameWinner);
 	}
 }
 
-notification.addEventListener("animationend", function (e) {
-	if(e.animationName === "inbound") {
-		// fall();
-		console.log("inbound finished for mode", notification.mode);
+notification.addEventListener("animationend", function ({animationName}) {
+	if(animationName === "inbound") {
 		if(notification.mode === "game over") {
 			fall();
 		} else if(notification.mode === "player selection") {
 			resetGame();
 		}
-	} else if(e.animationName === "outbound") {
-		if(notification.mode === "game over") {
-			presentPlayerChoice();
-		}
-		// else if(notification.mode === "player selection") {
-		// 	resetGame();
-		// }
-		// notification.mode = "hidden";
+	} else if(animationName === "outbound" && notification.mode === "game over") {
+		presentPlayerChoice();
 	}
 });
 
-// notification.querySelector("svg.X").onclick = () => setPlayerMark("X");
-// notification.querySelector("svg.O").onclick = () => setPlayerMark("O");
 notification.onclick = function (e) {
-	console.log("clicked", e.target);
 	if(notification.mode === "game over") {
 		showNotification(false);
 	} else {
@@ -125,7 +89,7 @@ notification.onclick = function (e) {
 function setPlayerMark(mark) {
 	playerMark = mark;
 	aiMark = mark === "X" ? "O" : "X";
-	console.log("player:", mark, ", AI:", aiMark);
+	// console.log("player:", mark, ", AI:", aiMark);
 	ai.setPCPlayer(playerMark);
 	showNotification(false);
 
@@ -201,7 +165,6 @@ function emptyBoard() {
 	let fragment;
 	({clones: cells, fragment} = generateBoard());
 	clone.appendChild(fragment);
-	console.log("cloned board:", clone);
 
 	board.parentNode.replaceChild(clone, board);
 	board = clone;
@@ -211,21 +174,14 @@ function resetGame() {
 	emptyBoard();
 	markQueue = [];
 	winningLine = currentGameWinner = undefined;
-	// const aimove = ai.resetGame();
-	// if(aimove) addMark(cells[aimove.aimove], aiMark);
 }
 
 function fall() {
-	// board.classList.remove("arrive");
 	board.classList.add("fall");
 }
 
-let playersTurn;
-let playerMark = "X", aiMark = "O";
 document.addEventListener("DOMContentLoaded", function() {
-	console.log("DOM fully loaded and parsed");
+	// console.log("DOM fully loaded and parsed");
 	cells = Array.from(document.getElementsByClassName("cell"));
 	notification.mode = "player selection";
-	// ai.setAIPlayer(aiMark);
-	playersTurn =true;
   });
