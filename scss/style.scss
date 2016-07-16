@@ -44,7 +44,9 @@ main {
 
 .board {
 	background-color: rgba(116, 162, 116, 0.12);
-	min-width: 3 * ($cell-size + 2 * $cell-margin);
+	$size: 3 * ($cell-size + 2 * $cell-margin);
+	width: $size;
+	height: $size;
 	perspective: 200px;
 	transition: 0.5s opacity;
 
