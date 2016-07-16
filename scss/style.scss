@@ -172,6 +172,7 @@ $fall-delay: 0.5s;
 	position: relative;
 	transform-style: preserve-3d;
 	box-shadow: $cell-inner-shadow, $cell-outer-shadow;
+	border: 1px solid gray;
 
 	> svg {
 		stroke: $symbol-color;
@@ -319,8 +320,7 @@ $fall-delay: 0.5s;
 }
 
 .easymode {
-	position: relative;
-	top: 40px;
+	transform: translateY(40px);
 	padding: 5px;
 	opacity: 0;
 	color: #423131;

@@ -101,7 +101,7 @@ function declareWinner(winner) {
 	notification.mode = "game over";
 	notification.classList.add(winner);
 
-	notificationText.textContent = winner === "tie" ? "It's a tie" : "won";
+	notificationText.textContent = winner === "tie" ? "It's a tie" : "player won";
 	showNotification();
 }
 
